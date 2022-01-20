@@ -9,9 +9,11 @@ import UIKit
 
 final class ContainerViewController: UIViewController {
     
-    let pageViewController: UIPageViewController
-    var pages = [UIViewController]()
-    var currentVC: UIViewController
+    private let pageViewController: UIPageViewController
+    private var pages = [UIViewController]()
+    private var currentVC: UIViewController
+    private var currentVCIndex = 0
+    private var isTimerStarted = false
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         self.pageViewController = UIPageViewController(
@@ -42,6 +44,12 @@ final class ContainerViewController: UIViewController {
         
         configureViewController()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if !isTimerStarted { startTimer() }
+    }
 }
 
 
@@ -66,8 +74,40 @@ private extension ContainerViewController {
             view.bottomAnchor.constraint(equalTo: pageViewController.view.bottomAnchor),
         ])
         
-        pageViewController.setViewControllers([pages.first!], direction: .forward, animated: false, completion: nil)
+        pageViewController.setViewControllers(
+            [pages.first!],
+            direction: .forward,
+            animated: false,
+            completion: nil
+        )
         currentVC = pages.first!
+    }
+    
+    func startTimer() {
+        isTimerStarted = true
+        let timer = Timer.scheduledTimer(
+            withTimeInterval: 5.0,
+            repeats: true
+        ) { [self] timer in
+            if currentVCIndex == pages.count - 1 {
+                currentVCIndex = 0
+                pageViewController.setViewControllers(
+                    [pages[currentVCIndex]],
+                    direction: .forward,
+                    animated: false,
+                    completion: nil
+                )
+            } else {
+                currentVCIndex += 1
+                pageViewController.setViewControllers(
+                    [pages[currentVCIndex]],
+                    direction: .forward,
+                    animated: false,
+                    completion: nil
+                )
+            }
+        }
+        timer.fire()
     }
 }
 
@@ -76,24 +116,32 @@ private extension ContainerViewController {
 
 extension ContainerViewController: UIPageViewControllerDataSource {
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerBefore viewController: UIViewController
+    ) -> UIViewController? {
         return getPreviousViewController(from: viewController)
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerAfter viewController: UIViewController
+    ) -> UIViewController? {
         return getNextViewController(from: viewController)
     }
 
-    private func getPreviousViewController(from viewController: UIViewController) -> UIViewController? {
-        guard let index = pages.firstIndex(of: viewController), index - 1 >= 0 else { return nil }
-        currentVC = pages[index - 1]
-        return pages[index - 1]
+    private func getPreviousViewController(
+        from viewController: UIViewController
+    ) -> UIViewController? {
+        currentVC = pages[currentVCIndex - 1]
+        return pages[currentVCIndex - 1]
     }
 
-    private func getNextViewController(from viewController: UIViewController) -> UIViewController? {
-        guard let index = pages.firstIndex(of: viewController), index + 1 < pages.count else { return nil }
-        currentVC = pages[index + 1]
-        return pages[index + 1]
+    private func getNextViewController(
+        from viewController: UIViewController
+    ) -> UIViewController? {
+        currentVC = pages[currentVCIndex + 1]
+        return pages[currentVCIndex + 1]
     }
 
     func presentationCount(for pageViewController: UIPageViewController) -> Int {
@@ -101,7 +149,7 @@ extension ContainerViewController: UIPageViewControllerDataSource {
     }
 
     func presentationIndex(for pageViewController: UIPageViewController) -> Int {
-        return pages.firstIndex(of: self.currentVC) ?? 0
+        return currentVCIndex
     }
 }
 
