@@ -14,11 +14,17 @@ final class MapViewController: UIViewController {
     
     private var sourceLocation: CLLocationCoordinate2D?
     private var destinationLocation: CLLocationCoordinate2D?
+    
     private var sourcePlaceMark: MKPlacemark?
     private var destinationPlaceMark: MKPlacemark?
+    
     private var sourceMapItem: MKMapItem?
     private var destinationItem: MKMapItem?
-    private var currentRouteIndex = 1
+    
+    private var currentRouteIndex = 0
+    
+    private var firstPathColor: UIColor = .systemBlue
+    private var secondPathColor: UIColor = .systemGreen
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +35,16 @@ final class MapViewController: UIViewController {
         configurePlaceMarks()
         configureAnnotations()
         
+        configurePath()
+    }
+    
+    @IBAction func didTapFirstRouteButton(_ sender: UIBarButtonItem) {
+        currentRouteIndex = 0
+        configurePath()
+    }
+    
+    @IBAction func didTapSecondRouteButton(_ sender: UIBarButtonItem) {
+        currentRouteIndex = 1
         configurePath()
     }
 }
