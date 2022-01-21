@@ -18,6 +18,7 @@ final class MapViewController: UIViewController {
     private var destinationPlaceMark: MKPlacemark?
     private var sourceMapItem: MKMapItem?
     private var destinationItem: MKMapItem?
+    private var currentRouteIndex = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +28,8 @@ final class MapViewController: UIViewController {
         configureLocations()
         configurePlaceMarks()
         configureAnnotations()
-        createPath()
+        
+        configurePath()
     }
 }
 
@@ -82,11 +84,12 @@ private extension MapViewController {
         mapView.showAnnotations([sourceAnotation, destinationAnotation], animated: true)
     }
     
-    func createPath() {
+    func configurePath() {
         let directionRequest = MKDirections.Request()
         directionRequest.source = sourceMapItem
         directionRequest.destination = destinationItem
         directionRequest.transportType = .automobile
+        directionRequest.requestsAlternateRoutes = true
         
         let direction = MKDirections(request: directionRequest)
         direction.calculate { [self] response, error in
@@ -97,7 +100,7 @@ private extension MapViewController {
                 return
             }
             
-            let route = response.routes[0]
+            let route = response.routes[currentRouteIndex]
             mapView.addOverlay(route.polyline, level: MKOverlayLevel.aboveRoads)
             
             let rect = route.polyline.boundingMapRect
