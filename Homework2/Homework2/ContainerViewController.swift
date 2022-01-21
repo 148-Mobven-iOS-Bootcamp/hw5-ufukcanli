@@ -86,7 +86,7 @@ private extension ContainerViewController {
     func startTimer() {
         isTimerStarted = true
         let timer = Timer.scheduledTimer(
-            withTimeInterval: 5.0,
+            withTimeInterval: 10.0,
             repeats: true
         ) { [self] timer in
             if currentVCIndex == pages.count - 1 {
