@@ -10,6 +10,7 @@ import UIKit
 final class ContainerViewController: UIViewController {
     
     private let pageViewController: UIPageViewController
+    
     private var pages = [UIViewController]()
     private var currentVC: UIViewController
     private var currentVCIndex = 0
