@@ -49,7 +49,9 @@
                     </view>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
+                        <outlet property="firstBarButton" destination="1db-tS-gbf" id="m26-NO-k0B"/>
                         <outlet property="mapView" destination="e36-by-d1b" id="clo-Ir-NDr"/>
+                        <outlet property="secondBarButton" destination="PnG-ra-SQ4" id="iIu-Nv-5Kv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JOu-Xk-B7b" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

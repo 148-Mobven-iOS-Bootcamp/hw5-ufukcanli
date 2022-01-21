@@ -11,6 +11,8 @@ import MapKit
 final class MapViewController: UIViewController {
 
     @IBOutlet private weak var mapView: MKMapView!
+    @IBOutlet private weak var firstBarButton: UIBarButtonItem!
+    @IBOutlet private weak var secondBarButton: UIBarButtonItem!
     
     private var sourceLocation: CLLocationCoordinate2D?
     private var destinationLocation: CLLocationCoordinate2D?
@@ -22,9 +24,7 @@ final class MapViewController: UIViewController {
     private var destinationItem: MKMapItem?
     
     private var currentRouteIndex = 0
-    
-    private var firstPathColor: UIColor = .systemBlue
-    private var secondPathColor: UIColor = .systemGreen
+    private var currentRouteOverlay: MKPolyline?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +34,6 @@ final class MapViewController: UIViewController {
         configureLocations()
         configurePlaceMarks()
         configureAnnotations()
-        
         configurePath()
     }
     
@@ -116,7 +115,12 @@ private extension MapViewController {
                 return
             }
             
+            if let currentRouteOverlay = currentRouteOverlay {
+                mapView.removeOverlay(currentRouteOverlay)
+            }
+                        
             let route = response.routes[currentRouteIndex]
+            currentRouteOverlay = route.polyline
             mapView.addOverlay(route.polyline, level: MKOverlayLevel.aboveRoads)
             
             let rect = route.polyline.boundingMapRect
